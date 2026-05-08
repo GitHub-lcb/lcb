@@ -1,8 +1,9 @@
-package com.lcb.common.exception;
+package com.lcb.framework.handler;
 
-import com.lcb.common.core.Result;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
+import com.lcb.common.core.Result;
+import com.lcb.common.exception.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
