@@ -5,8 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.lcb</groupId>
-        <artifactId>lcb-admin</artifactId>
+        <artifactId>lcb-parent</artifactId>
         <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>lcb-system</artifactId>
     <description>系统管理模块</description>

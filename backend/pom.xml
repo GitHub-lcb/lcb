@@ -10,7 +10,7 @@
         <relativePath/>
     </parent>
     <groupId>com.lcb</groupId>
-    <artifactId>lcb-admin</artifactId>
+    <artifactId>lcb-parent</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
     <description>LCB 管理系统脚手架</description>
@@ -85,11 +85,13 @@
         </dependencies>
     </dependencyManagement>
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>
