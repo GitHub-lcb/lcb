@@ -1,4 +1,4 @@
-package com.lcb.framework.aspect;
+package com.lcb.monitor.aspect;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.lcb.monitor.domain.SysAuditLog;
