@@ -1,6 +1,8 @@
 package com.lcb.common.exception;
 
 import com.lcb.common.core.Result;
+import cn.dev33.satoken.exception.NotLoginException;
+import cn.dev33.satoken.exception.NotPermissionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,6 +15,16 @@ public class GlobalExceptionHandler {
     public Result<Void> handleServiceException(ServiceException e) {
         log.warn("业务异常: {}", e.getMessage());
         return Result.fail(e.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(NotLoginException.class)
+    public Result<Void> handleNotLogin(NotLoginException e) {
+        return Result.fail(401, "未登录，请先登录");
+    }
+
+    @ExceptionHandler(NotPermissionException.class)
+    public Result<Void> handleNotPermission(NotPermissionException e) {
+        return Result.fail(403, "无权限访问");
     }
 
     @ExceptionHandler(Exception.class)

@@ -28,3 +28,8 @@ mybatis-plus:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+
+sa-token:
+  token-name: Authorization
+  is-read-head: true
+  is-read-cookie: false
