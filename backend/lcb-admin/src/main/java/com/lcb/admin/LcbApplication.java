@@ -4,7 +4,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@MapperScan("com.lcb")
+@MapperScan("com.lcb.**.mapper")
 @SpringBootApplication(scanBasePackages = "com.lcb")
 public class LcbApplication {
     public static void main(String[] args) {
