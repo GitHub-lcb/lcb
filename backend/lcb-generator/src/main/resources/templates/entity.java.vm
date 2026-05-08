@@ -1,0 +1,16 @@
+package ${packageName}.domain;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.lcb.common.domain.BaseEntity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+/**
+ * ${tableComment}
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@TableName("t_${classNameLower}")
+public class ${className} extends BaseEntity {
+    private Long id;
+}

@@ -1,0 +1,81 @@
+import { Table, Button, Space, Modal, Form, Input, message, Card } from 'antd'
+import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { useState, useEffect } from 'react'
+import { ${classNameLower}Api } from '@/api/${moduleName}/${classNameLower}'
+
+export default function ${className}Page() {
+    const [data, setData] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [total, setTotal] = useState(0)
+    const [page, setPage] = useState(1)
+    const [modalOpen, setModalOpen] = useState(false)
+    const [editingRow, setEditingRow] = useState<any>(null)
+    const [form] = Form.useForm()
+
+    const columns = [
+        { title: '操作', render: (_: any, record: any) => (
+            <Space>
+                <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>编辑</Button>
+                <Button type="link" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)}>删除</Button>
+            </Space>
+        )},
+    ]
+
+    const fetchData = async () => {
+        setLoading(true)
+        const res: any = await ${classNameLower}Api.page({ page, pageSize: 10 })
+        setData(res.records)
+        setTotal(res.total)
+        setLoading(false)
+    }
+
+    useEffect(() => { fetchData() }, [page])
+
+    const handleAdd = () => {
+        setEditingRow(null)
+        form.resetFields()
+        setModalOpen(true)
+    }
+
+    const handleEdit = (row: any) => {
+        setEditingRow(row)
+        form.setFieldsValue(row)
+        setModalOpen(true)
+    }
+
+    const handleDelete = async (id: number) => {
+        Modal.confirm({
+            title: '确认删除',
+            content: '确定要删除此记录吗？',
+            onOk: async () => {
+                await ${classNameLower}Api.remove(id)
+                message.success('删除成功')
+                fetchData()
+            }
+        })
+    }
+
+    const handleSubmit = async () => {
+        const values = await form.validateFields()
+        if (editingRow) {
+            await ${classNameLower}Api.edit({ ...values, id: editingRow.id })
+        } else {
+            await ${classNameLower}Api.add(values)
+        }
+        message.success(editingRow ? '修改成功' : '新增成功')
+        setModalOpen(false)
+        fetchData()
+    }
+
+    return (
+        <Card title="${tableComment}管理" extra={<Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>新增</Button>}>
+            <Table columns={columns} dataSource={data} loading={loading} rowKey="id"
+                pagination={{ current: page, total, onChange: setPage }} />
+            <Modal title={editingRow ? '编辑' : '新增'} open={modalOpen} onOk={handleSubmit} onCancel={() => setModalOpen(false)}>
+                <Form form={form} layout="vertical">
+                    <Form.Item name="id" hidden><Input /></Form.Item>
+                </Form>
+            </Modal>
+        </Card>
+    )
+}

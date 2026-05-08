@@ -1,0 +1,49 @@
+package ${packageName}.controller;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lcb.common.core.Result;
+import ${packageName}.domain.${className};
+import ${packageName}.mapper.${className}Mapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.*;
+
+@Tag(name = "${tableComment}")
+@RestController
+@RequestMapping("/api/${moduleName}/${classNameLower}")
+public class ${className}Controller {
+
+    private final ${className}Mapper mapper;
+
+    public ${className}Controller(${className}Mapper mapper) {
+        this.mapper = mapper;
+    }
+
+    @Operation(summary = "列表")
+    @GetMapping("/page")
+    public Result<Page<${className}>> page(@RequestParam(defaultValue = "1") int page,
+                                           @RequestParam(defaultValue = "10") int pageSize) {
+        return Result.ok(mapper.selectPage(new Page<>(page, pageSize), null));
+    }
+
+    @Operation(summary = "新增")
+    @PostMapping
+    public Result<Void> add(@RequestBody ${className} entity) {
+        mapper.insert(entity);
+        return Result.ok();
+    }
+
+    @Operation(summary = "修改")
+    @PutMapping
+    public Result<Void> edit(@RequestBody ${className} entity) {
+        mapper.updateById(entity);
+        return Result.ok();
+    }
+
+    @Operation(summary = "删除")
+    @DeleteMapping("/{id}")
+    public Result<Void> remove(@PathVariable Long id) {
+        mapper.deleteById(id);
+        return Result.ok();
+    }
+}

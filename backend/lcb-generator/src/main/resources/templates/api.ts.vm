@@ -1,0 +1,8 @@
+import request from '@/api/request'
+
+export const ${classNameLower}Api = {
+    page: (params: any) => request.get('/${moduleName}/${classNameLower}/page', { params }),
+    add: (data: any) => request.post('/${moduleName}/${classNameLower}', data),
+    edit: (data: any) => request.put('/${moduleName}/${classNameLower}', data),
+    remove: (id: number) => request.delete('/${moduleName}/${classNameLower}/' + id),
+}

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+target/
+*.class
+*.jar
+*.log
+.idea/
+*.iml
+.superpowers/
+upload/
+.DS_Store

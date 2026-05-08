@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:lcb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+sa-token:
+  token-name: Authorization
+  timeout: 3600
+  is-log: false
