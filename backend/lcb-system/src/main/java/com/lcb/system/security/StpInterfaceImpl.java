@@ -1,4 +1,4 @@
-package com.lcb.framework.security;
+package com.lcb.system.security;
 
 import cn.dev33.satoken.stp.StpInterface;
 import com.lcb.system.service.ISysMenuService;
