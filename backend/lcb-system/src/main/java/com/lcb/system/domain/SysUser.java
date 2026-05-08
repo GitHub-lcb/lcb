@@ -1,6 +1,7 @@
 package com.lcb.system.domain;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lcb.common.domain.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,7 +12,10 @@ import lombok.EqualsAndHashCode;
 public class SysUser extends BaseEntity {
     private Long id;
     private String username;
+
+    @JsonIgnore
     private String password;
+
     private String nickname;
     private String email;
     private String phone;

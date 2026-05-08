@@ -6,4 +6,5 @@ export const userApi = {
   add: (data: any) => request.post('/system/user', data),
   edit: (data: any) => request.put('/system/user', data),
   remove: (id: number) => request.delete(`/system/user/${id}`),
+  resetPassword: (id: number, password: string) => request.put(`/system/user/${id}/reset-password`, { password }),
 }

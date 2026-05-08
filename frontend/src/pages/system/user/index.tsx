@@ -1,5 +1,5 @@
 import { Table, Button, Space, Modal, Form, Input, Select, message, Card, Tag } from 'antd'
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { PlusOutlined, EditOutlined, DeleteOutlined, KeyOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
 import { userApi } from '../../../api/system/user'
 
@@ -9,8 +9,11 @@ export default function UserPage() {
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
+  const [resetModalOpen, setResetModalOpen] = useState(false)
+  const [resetUserId, setResetUserId] = useState<number | null>(null)
   const [editingRow, setEditingRow] = useState<any>(null)
   const [form] = Form.useForm()
+  const [resetForm] = Form.useForm()
 
   const columns = [
     { title: '用户名', dataIndex: 'username', key: 'username' },
@@ -24,6 +27,7 @@ export default function UserPage() {
     { title: '操作', key: 'action', render: (_: any, record: any) => (
       <Space>
         <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>编辑</Button>
+        <Button type="link" icon={<KeyOutlined />} onClick={() => handleResetPassword(record)}>重置密码</Button>
         <Button type="link" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)}>删除</Button>
       </Space>
     )},
@@ -59,10 +63,27 @@ export default function UserPage() {
     }})
   }
 
+  const handleResetPassword = (row: any) => {
+    setResetUserId(row.id)
+    resetForm.resetFields()
+    setResetModalOpen(true)
+  }
+
+  const handleResetSubmit = async () => {
+    const values = await resetForm.validateFields()
+    if (resetUserId !== null) {
+      await userApi.resetPassword(resetUserId, values.password)
+      message.success('密码重置成功')
+      setResetModalOpen(false)
+    }
+  }
+
   const handleSubmit = async () => {
     const values = await form.validateFields()
     if (editingRow) {
-      await userApi.edit({ ...values, id: editingRow.id })
+      const payload: any = { ...values, id: editingRow.id }
+      if (!payload.password) delete payload.password
+      await userApi.edit(payload)
     } else {
       await userApi.add(values)
     }
@@ -81,11 +102,26 @@ export default function UserPage() {
           <Form.Item label="用户名" name="username" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
+          {!editingRow && (
+            <Form.Item label="密码" name="password" rules={[{ required: true, message: '请输入密码' }]}>
+              <Input.Password />
+            </Form.Item>
+          )}
           <Form.Item label="昵称" name="nickname"><Input /></Form.Item>
           <Form.Item label="邮箱" name="email"><Input /></Form.Item>
           <Form.Item label="手机号" name="phone"><Input /></Form.Item>
           <Form.Item label="状态" name="status" initialValue={1}>
             <Select options={[{ value: 1, label: '正常' }, { value: 0, label: '禁用' }]} />
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal title="重置密码" open={resetModalOpen} onOk={handleResetSubmit} onCancel={() => setResetModalOpen(false)} width={400}>
+        <Form form={resetForm} layout="vertical">
+          <Form.Item label="新密码" name="password" rules={[
+            { required: true, message: '请输入新密码' },
+            { min: 6, message: '密码至少6位' },
+          ]}>
+            <Input.Password />
           </Form.Item>
         </Form>
       </Modal>

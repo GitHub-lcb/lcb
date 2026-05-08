@@ -8,6 +8,7 @@ import com.lcb.system.domain.SysUser;
 import com.lcb.system.mapper.SysUserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
@@ -19,9 +20,11 @@ import java.util.Map;
 public class AuthController {
 
     private final SysUserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(SysUserMapper userMapper) {
+    public AuthController(SysUserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Operation(summary = "登录")
@@ -34,8 +37,7 @@ public class AuthController {
         if (user == null) {
             throw new ServiceException("用户名或密码错误");
         }
-        // 生产环境应使用 BCrypt 密码校验
-        if (!dto.getPassword().equals(user.getPassword())) {
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new ServiceException("用户名或密码错误");
         }
         StpUtil.login(user.getId());

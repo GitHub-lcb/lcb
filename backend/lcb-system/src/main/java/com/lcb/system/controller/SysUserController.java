@@ -7,7 +7,10 @@ import com.lcb.system.domain.SysUser;
 import com.lcb.system.service.ISysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Tag(name = "用户管理")
 @RestController
@@ -15,9 +18,11 @@ import org.springframework.web.bind.annotation.*;
 public class SysUserController {
 
     private final ISysUserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public SysUserController(ISysUserService userService) {
+    public SysUserController(ISysUserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Operation(summary = "用户分页列表")
@@ -56,6 +61,21 @@ public class SysUserController {
     @DeleteMapping("/{id}")
     public Result<Void> remove(@PathVariable Long id) {
         userService.removeById(id);
+        return Result.ok();
+    }
+
+    @Operation(summary = "重置密码")
+    @SaCheckPermission("system:user:edit")
+    @PutMapping("/{id}/reset-password")
+    public Result<Void> resetPassword(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String newPassword = body.get("password");
+        if (newPassword == null || newPassword.isEmpty()) {
+            return Result.fail("密码不能为空");
+        }
+        SysUser user = new SysUser();
+        user.setId(id);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userService.updateById(user);
         return Result.ok();
     }
 }
