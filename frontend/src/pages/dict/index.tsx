@@ -1,7 +1,7 @@
 import { Table, Button, Space, Modal, Form, Input, message, Card, Tag, Tabs } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
-import { dictApi } from '../../../api/system/dict'
+import { dictApi } from '../../api/system/dict'
 
 export default function DictPage() {
   const [data, setData] = useState([])

@@ -77,13 +77,14 @@ public class GeneratorService {
     public void generateCode(Long tableId) {
         GenTable table = genTableMapper.selectById(tableId);
         String className = table.getClassName();
+        String classNameLower = Character.toLowerCase(className.charAt(0)) + className.substring(1);
         String moduleName = table.getModuleName();
         String packageName = table.getPackageName().replace(".", "/");
         String packagePath = "com/" + packageName;
 
         Map<String, Object> ctx = new HashMap<>();
         ctx.put("className", className);
-        ctx.put("classNameLower", Character.toLowerCase(className.charAt(0)) + className.substring(1));
+        ctx.put("classNameLower", classNameLower);
         ctx.put("moduleName", moduleName);
         ctx.put("packageName", table.getPackageName());
         ctx.put("tableComment", table.getTableComment());
