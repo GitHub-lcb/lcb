@@ -3,9 +3,8 @@ package com.lcb.generator.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.lcb.generator.domain.GenTable;
 import com.lcb.generator.domain.GenTableColumn;
+import com.lcb.generator.mapper.GenTableColumnMapper;
 import com.lcb.generator.mapper.GenTableMapper;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
@@ -23,7 +22,7 @@ import java.util.*;
 public class GeneratorService {
 
     private final GenTableMapper genTableMapper;
-    private final SqlSessionFactory sqlSessionFactory;
+    private final GenTableColumnMapper genTableColumnMapper;
 
     @Value("${generator.backend-path:./backend}")
     private String backendPath;
@@ -31,9 +30,9 @@ public class GeneratorService {
     @Value("${generator.frontend-path:./frontend}")
     private String frontendPath;
 
-    public GeneratorService(GenTableMapper genTableMapper, SqlSessionFactory sqlSessionFactory) {
+    public GeneratorService(GenTableMapper genTableMapper, GenTableColumnMapper genTableColumnMapper) {
         this.genTableMapper = genTableMapper;
-        this.sqlSessionFactory = sqlSessionFactory;
+        this.genTableColumnMapper = genTableColumnMapper;
     }
 
     public List<Map<String, Object>> getDbTables() {
@@ -71,7 +70,7 @@ public class GeneratorService {
             column.setIsEdit(1);
             column.setIsList(1);
             column.setQueryType("EQ");
-            genTableMapper.getSqlSession().insert("insert into t_gen_table_column", column);
+            genTableColumnMapper.insert(column);
         }
     }
 
