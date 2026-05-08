@@ -1,6 +1,6 @@
--- 默认管理员 (密码需要替换为 BCrypt 加密后的值)
+-- 默认管理员 (密码明文: admin123)
 INSERT INTO t_sys_user (id, username, password, nickname, status)
-VALUES (1, 'admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EH', '系统管理员', 1);
+VALUES (1, 'admin', 'admin123', '系统管理员', 1);
 
 -- 默认角色
 INSERT INTO t_sys_role (id, role_name, role_key, status)
