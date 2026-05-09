@@ -1,5 +1,5 @@
 import request from '../request'
-import type { PageResult, SysUser } from '../../types/api'
+import type { PageResult, SysUser } from '@/types/api'
 
 export const userApi = {
   page: (params: { page: number; pageSize: number }): Promise<PageResult<SysUser>> =>

@@ -1,6 +1,6 @@
 import { Table, Card, Tag } from 'antd'
 import { useState, useEffect } from 'react'
-import { auditLogApi } from '../../api/monitor/audit-log'
+import { auditLogApi } from '@/api/monitor/audit-log'
 
 interface AuditLogItem {
   id: number
@@ -29,13 +29,18 @@ export default function AuditLog() {
     { title: '操作时间', dataIndex: 'createTime', key: 'createTime' },
   ]
 
-  useEffect(() => {
+  const fetchData = async () => {
     setLoading(true)
-    auditLogApi.page({ page, pageSize: 10 }).then((res) => {
+    try {
+      const res = await auditLogApi.page({ page, pageSize: 10 })
       setData(res.records || [])
       setTotal(res.total || 0)
-    }).finally(() => setLoading(false))
-  }, [page])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { fetchData() }, [page])
 
   return (
     <Card title="审计日志">

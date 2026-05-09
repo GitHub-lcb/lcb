@@ -1,8 +1,8 @@
 import { Table, Button, Space, Modal, Form, Input, message, Card, Tag } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
-import { roleApi } from '../../../api/system/role'
-import type { SysRole } from '../../../types/api'
+import { roleApi } from '@/api/system/role'
+import type { SysRole } from '@/types/api'
 
 export default function RolePage() {
   const [data, setData] = useState<SysRole[]>([])

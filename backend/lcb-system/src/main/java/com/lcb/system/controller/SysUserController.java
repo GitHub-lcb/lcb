@@ -4,13 +4,15 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lcb.common.core.Result;
 import com.lcb.system.domain.SysUser;
+import com.lcb.system.dto.PasswordResetDTO;
+import com.lcb.system.dto.SysUserDTO;
 import com.lcb.system.service.ISysUserService;
+import com.lcb.system.vo.SysUserVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Tag(name = "用户管理")
 @RestController
@@ -28,25 +30,38 @@ public class SysUserController {
     @Operation(summary = "用户分页列表")
     @SaCheckPermission("system:user:list")
     @GetMapping("/page")
-    public Result<Page<SysUser>> page(@RequestParam(defaultValue = "1") int page,
-                                      @RequestParam(defaultValue = "10") int pageSize) {
-        return Result.ok(userService.page(new Page<>(page, pageSize)));
+    public Result<Page<SysUserVO>> page(@RequestParam(defaultValue = "1") int page,
+                                        @RequestParam(defaultValue = "10") int pageSize) {
+        Page<SysUser> entityPage = userService.page(new Page<>(page, pageSize));
+        Page<SysUserVO> voPage = new Page<>(entityPage.getCurrent(), entityPage.getSize(), entityPage.getTotal());
+        voPage.setRecords(entityPage.getRecords().stream()
+            .map(SysUserVO::fromEntity)
+            .collect(Collectors.toList()));
+        return Result.ok(voPage);
     }
 
     @Operation(summary = "用户详情")
     @SaCheckPermission("system:user:list")
     @GetMapping("/{id}")
-    public Result<SysUser> get(@PathVariable Long id) {
-        return Result.ok(userService.getById(id));
+    public Result<SysUserVO> get(@PathVariable Long id) {
+        return Result.ok(SysUserVO.fromEntity(userService.getById(id)));
     }
 
     @Operation(summary = "新增用户")
     @SaCheckPermission("system:user:add")
     @PostMapping
-    public Result<Void> add(@RequestBody SysUser user) {
-        if (user.getPassword() == null || user.getPassword().length() < 6) {
+    public Result<Void> add(@RequestBody SysUserDTO dto) {
+        if (dto.getPassword() == null || dto.getPassword().length() < 6) {
             return Result.fail("密码长度不能少于6位");
         }
+        SysUser user = new SysUser();
+        user.setUsername(dto.getUsername());
+        user.setPassword(dto.getPassword());
+        user.setNickname(dto.getNickname());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        user.setAvatar(dto.getAvatar());
+        user.setStatus(dto.getStatus());
         userService.save(user);
         return Result.ok();
     }
@@ -54,7 +69,19 @@ public class SysUserController {
     @Operation(summary = "修改用户")
     @SaCheckPermission("system:user:edit")
     @PutMapping
-    public Result<Void> edit(@RequestBody SysUser user) {
+    public Result<Void> edit(@RequestBody SysUserDTO dto) {
+        if (dto.getPassword() != null && dto.getPassword().length() < 6) {
+            return Result.fail("密码长度不能少于6位");
+        }
+        SysUser user = new SysUser();
+        user.setId(dto.getId());
+        user.setUsername(dto.getUsername());
+        user.setPassword(dto.getPassword());
+        user.setNickname(dto.getNickname());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        user.setAvatar(dto.getAvatar());
+        user.setStatus(dto.getStatus());
         userService.updateById(user);
         return Result.ok();
     }
@@ -70,14 +97,13 @@ public class SysUserController {
     @Operation(summary = "重置密码")
     @SaCheckPermission("system:user:edit")
     @PutMapping("/{id}/reset-password")
-    public Result<Void> resetPassword(@PathVariable Long id, @RequestBody Map<String, String> body) {
-        String newPassword = body.get("password");
-        if (newPassword == null || newPassword.isEmpty()) {
-            return Result.fail("密码不能为空");
+    public Result<Void> resetPassword(@PathVariable Long id, @RequestBody PasswordResetDTO dto) {
+        if (dto.getPassword() == null || dto.getPassword().length() < 6) {
+            return Result.fail("密码长度不能少于6位");
         }
         SysUser user = new SysUser();
         user.setId(id);
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         userService.updateById(user);
         return Result.ok();
     }

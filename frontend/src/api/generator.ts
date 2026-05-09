@@ -1,5 +1,5 @@
 import request from './request'
-import type { PageResult } from '../types/api'
+import type { PageResult } from '@/types/api'
 
 interface GenTable {
   id: number

@@ -1,5 +1,5 @@
 import request from './request'
-import type { LoginParams, LoginResult, UserInfoResult } from '../types/api'
+import type { LoginParams, LoginResult, UserInfoResult } from '@/types/api'
 
 export const authApi = {
   login: (data: LoginParams): Promise<LoginResult> =>

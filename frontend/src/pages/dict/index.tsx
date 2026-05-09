@@ -1,8 +1,8 @@
 import { Table, Button, Space, Modal, Form, Input, message, Card, Tag } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
-import { dictApi } from '../../api/system/dict'
-import type { SysDictType } from '../../types/api'
+import { dictApi } from '@/api/system/dict'
+import type { SysDictType } from '@/types/api'
 
 export default function DictPage() {
   const [data, setData] = useState<SysDictType[]>([])

@@ -1,4 +1,4 @@
-package com.lcb.system.domain;
+package com.lcb.system.dto;
 
 import lombok.Data;
 

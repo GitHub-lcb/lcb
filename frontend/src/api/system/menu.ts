@@ -1,5 +1,5 @@
 import request from '../request'
-import type { SysMenu } from '../../types/api'
+import type { SysMenu } from '@/types/api'
 
 export const menuApi = {
   tree: (): Promise<SysMenu[]> => request.get('/system/menu/tree'),

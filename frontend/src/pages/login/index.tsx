@@ -2,8 +2,8 @@ import { Form, Input, Button, Card, message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { authApi } from '../../api/auth'
-import type { LoginParams } from '../../types/api'
+import { authApi } from '@/api/auth'
+import type { LoginParams } from '@/types/api'
 
 export default function Login() {
   const navigate = useNavigate()

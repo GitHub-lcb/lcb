@@ -6,11 +6,13 @@ import com.lcb.common.core.Result;
 import com.lcb.generator.domain.GenTable;
 import com.lcb.generator.mapper.GenTableMapper;
 import com.lcb.generator.service.GeneratorService;
+import com.lcb.generator.vo.GenTableVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Tag(name = "代码生成")
 @RestController
@@ -28,9 +30,14 @@ public class GeneratorController {
     @Operation(summary = "数据库表列表")
     @SaCheckPermission("generator:table:list")
     @GetMapping("/table/page")
-    public Result<Page<GenTable>> page(@RequestParam(defaultValue = "1") int page,
-                                       @RequestParam(defaultValue = "10") int pageSize) {
-        return Result.ok(genTableMapper.selectPage(new Page<>(page, pageSize), null));
+    public Result<Page<GenTableVO>> page(@RequestParam(defaultValue = "1") int page,
+                                         @RequestParam(defaultValue = "10") int pageSize) {
+        Page<GenTable> entityPage = genTableMapper.selectPage(new Page<>(page, pageSize), null);
+        Page<GenTableVO> voPage = new Page<>(entityPage.getCurrent(), entityPage.getSize(), entityPage.getTotal());
+        voPage.setRecords(entityPage.getRecords().stream()
+            .map(GenTableVO::fromEntity)
+            .collect(Collectors.toList()));
+        return Result.ok(voPage);
     }
 
     @Operation(summary = "获取表列信息")

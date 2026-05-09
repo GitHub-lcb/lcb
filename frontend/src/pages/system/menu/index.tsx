@@ -1,8 +1,8 @@
 import { Table, Button, Space, Modal, Form, Input, InputNumber, Select, message, Card } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
-import { menuApi } from '../../../api/system/menu'
-import type { SysMenu } from '../../../types/api'
+import { menuApi } from '@/api/system/menu'
+import type { SysMenu } from '@/types/api'
 
 export default function MenuPage() {
   const [data, setData] = useState<SysMenu[]>([])

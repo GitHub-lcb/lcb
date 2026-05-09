@@ -1,5 +1,5 @@
 import request from '../request'
-import type { PageResult, SysRole, RoleMenuParams } from '../../types/api'
+import type { PageResult, SysRole, RoleMenuParams } from '@/types/api'
 
 export const roleApi = {
   page: (params: { page: number; pageSize: number }): Promise<PageResult<SysRole>> =>

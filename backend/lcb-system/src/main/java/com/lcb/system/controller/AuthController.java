@@ -4,9 +4,10 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.lcb.common.core.Result;
 import com.lcb.common.exception.ServiceException;
-import com.lcb.system.domain.LoginDTO;
 import com.lcb.system.domain.SysUser;
+import com.lcb.system.dto.LoginDTO;
 import com.lcb.system.service.ISysUserService;
+import com.lcb.system.vo.SysUserVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,7 +45,7 @@ public class AuthController {
         StpUtil.login(user.getId());
         Map<String, Object> result = new HashMap<>();
         result.put("token", StpUtil.getTokenValue());
-        result.put("user", user);
+        result.put("user", SysUserVO.fromEntity(user));
         return Result.ok(result);
     }
 
@@ -62,7 +63,7 @@ public class AuthController {
         SysUser user = userService.getById(userId);
         List<String> permissions = StpUtil.getPermissionList();
         Map<String, Object> result = new HashMap<>();
-        result.put("user", user);
+        result.put("user", SysUserVO.fromEntity(user));
         result.put("permissions", permissions);
         return Result.ok(result);
     }

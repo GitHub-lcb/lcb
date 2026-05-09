@@ -1,7 +1,7 @@
 import { Table, Button, Space, Modal, message, Card, Upload } from 'antd'
 import { UploadOutlined, DeleteOutlined, FileOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
-import { fileApi } from '../../api/file'
+import { fileApi } from '@/api/file'
 
 interface FileItem {
   id: number

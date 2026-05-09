@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { useState } from 'react'
-import { authApi } from '../api/auth'
+import { authApi } from '@/api/auth'
 
 const { Header, Sider, Content } = Layout
 

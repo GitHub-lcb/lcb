@@ -1,5 +1,5 @@
 import request from '../request'
-import type { PageResult, SysDictType, SysDictData } from '../../types/api'
+import type { PageResult, SysDictType, SysDictData } from '@/types/api'
 
 export const dictApi = {
   typePage: (params: { page: number; pageSize: number }): Promise<PageResult<SysDictType>> =>

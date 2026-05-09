@@ -1,7 +1,7 @@
 import { Table, Button, Space, message, Card, Select, Modal } from 'antd'
 import { CodeOutlined, DownloadOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
-import { generatorApi } from '../../api/generator'
+import { generatorApi } from '@/api/generator'
 
 interface GenTable {
   id: number

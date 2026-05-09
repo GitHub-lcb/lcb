@@ -1,8 +1,8 @@
 import { Table, Button, Space, Modal, Form, Input, Select, message, Card, Tag } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined, KeyOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
-import { userApi } from '../../../api/system/user'
-import type { SysUser } from '../../../types/api'
+import { userApi } from '@/api/system/user'
+import type { SysUser } from '@/types/api'
 
 export default function UserPage() {
   const [data, setData] = useState<SysUser[]>([])
