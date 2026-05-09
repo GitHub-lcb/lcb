@@ -44,6 +44,9 @@ public class SysUserController {
     @SaCheckPermission("system:user:add")
     @PostMapping
     public Result<Void> add(@RequestBody SysUser user) {
+        if (user.getPassword() == null || user.getPassword().length() < 6) {
+            return Result.fail("密码长度不能少于6位");
+        }
         userService.save(user);
         return Result.ok();
     }

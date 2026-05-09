@@ -2,12 +2,13 @@ import { Table, Button, Space, Modal, Form, Input, InputNumber, Select, message,
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
 import { menuApi } from '../../../api/system/menu'
+import type { SysMenu } from '../../../types/api'
 
 export default function MenuPage() {
-  const [data, setData] = useState([])
+  const [data, setData] = useState<SysMenu[]>([])
   const [loading, setLoading] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
-  const [editingRow, setEditingRow] = useState<any>(null)
+  const [editingRow, setEditingRow] = useState<SysMenu | null>(null)
   const [form] = Form.useForm()
 
   const columns = [
@@ -19,7 +20,7 @@ export default function MenuPage() {
     { title: '类型', dataIndex: 'menuType', key: 'menuType', render: (v: string) =>
       ({ M: '目录', C: '菜单', F: '按钮' })[v] || v
     },
-    { title: '操作', key: 'action', render: (_: any, record: any) => (
+    { title: '操作', key: 'action', render: (_: unknown, record: SysMenu) => (
       <Space>
         <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>编辑</Button>
         <Button type="link" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)}>删除</Button>
@@ -29,21 +30,21 @@ export default function MenuPage() {
 
   const fetchData = async () => {
     setLoading(true)
-    const res: any = await menuApi.tree()
+    const res = await menuApi.tree()
     setData(res || [])
     setLoading(false)
   }
 
   useEffect(() => { fetchData() }, [])
 
-  const handleAdd = (parent?: any) => {
+  const handleAdd = (parent?: SysMenu) => {
     setEditingRow(null)
     form.resetFields()
     if (parent) form.setFieldValue('parentId', parent.id)
     setModalOpen(true)
   }
 
-  const handleEdit = (row: any) => {
+  const handleEdit = (row: SysMenu) => {
     setEditingRow(row)
     form.setFieldsValue(row)
     setModalOpen(true)

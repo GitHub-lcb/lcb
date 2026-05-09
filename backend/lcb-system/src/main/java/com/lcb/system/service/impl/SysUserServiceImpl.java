@@ -6,8 +6,10 @@ import com.lcb.system.mapper.SysUserMapper;
 import com.lcb.system.service.ISysUserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
 
     private final PasswordEncoder passwordEncoder;

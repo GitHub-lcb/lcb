@@ -1,5 +1,6 @@
 package com.lcb.generator.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lcb.common.core.Result;
 import com.lcb.generator.domain.GenTable;
@@ -25,6 +26,7 @@ public class GeneratorController {
     }
 
     @Operation(summary = "数据库表列表")
+    @SaCheckPermission("generator:table:list")
     @GetMapping("/table/page")
     public Result<Page<GenTable>> page(@RequestParam(defaultValue = "1") int page,
                                        @RequestParam(defaultValue = "10") int pageSize) {
@@ -32,6 +34,7 @@ public class GeneratorController {
     }
 
     @Operation(summary = "获取表列信息")
+    @SaCheckPermission("generator:table:list")
     @GetMapping("/table/{tableId}/columns")
     public Result<List<Map<String, Object>>> columns(@PathVariable Long tableId) {
         GenTable table = genTableMapper.selectById(tableId);
@@ -39,6 +42,7 @@ public class GeneratorController {
     }
 
     @Operation(summary = "生成代码到对应目录")
+    @SaCheckPermission("generator:code:generate")
     @PostMapping("/code/{tableId}")
     public Result<Void> generate(@PathVariable Long tableId) {
         generatorService.generateCode(tableId);

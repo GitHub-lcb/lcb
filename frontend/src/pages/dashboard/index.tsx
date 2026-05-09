@@ -1,7 +1,15 @@
 import { Row, Col, Card, Statistic, Table, Tag } from 'antd'
 import { ArrowUpOutlined, UserOutlined, ShoppingCartOutlined, DollarOutlined } from '@ant-design/icons'
 
-const recentOrders = [
+interface OrderItem {
+  key: string
+  orderNo: string
+  user: string
+  amount: number
+  status: string
+}
+
+const recentOrders: OrderItem[] = [
   { key: '1', orderNo: 'ORD-2026-0001', user: '张三', amount: 1280, status: '已完成' },
   { key: '2', orderNo: 'ORD-2026-0002', user: '李四', amount: 560, status: '处理中' },
   { key: '3', orderNo: 'ORD-2026-0003', user: '王五', amount: 3200, status: '待审核' },

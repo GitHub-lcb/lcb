@@ -1,10 +1,11 @@
-import { Table, Button, Space, Modal, Form, Input, message, Card, Tag, Tabs } from 'antd'
+import { Table, Button, Space, Modal, Form, Input, message, Card, Tag } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
 import { dictApi } from '../../api/system/dict'
+import type { SysDictType } from '../../types/api'
 
 export default function DictPage() {
-  const [data, setData] = useState([])
+  const [data, setData] = useState<SysDictType[]>([])
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
@@ -22,7 +23,7 @@ export default function DictPage() {
 
   const fetchData = async () => {
     setLoading(true)
-    const res: any = await dictApi.typePage({ page, pageSize: 10 })
+    const res = await dictApi.typePage({ page, pageSize: 10 })
     setData(res.records || [])
     setTotal(res.total || 0)
     setLoading(false)

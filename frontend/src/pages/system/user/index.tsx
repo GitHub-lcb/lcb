@@ -2,16 +2,17 @@ import { Table, Button, Space, Modal, Form, Input, Select, message, Card, Tag } 
 import { PlusOutlined, EditOutlined, DeleteOutlined, KeyOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
 import { userApi } from '../../../api/system/user'
+import type { SysUser } from '../../../types/api'
 
 export default function UserPage() {
-  const [data, setData] = useState([])
+  const [data, setData] = useState<SysUser[]>([])
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
   const [resetModalOpen, setResetModalOpen] = useState(false)
   const [resetUserId, setResetUserId] = useState<number | null>(null)
-  const [editingRow, setEditingRow] = useState<any>(null)
+  const [editingRow, setEditingRow] = useState<SysUser | null>(null)
   const [form] = Form.useForm()
   const [resetForm] = Form.useForm()
 
@@ -24,7 +25,7 @@ export default function UserPage() {
       <Tag color={v === 1 ? 'green' : 'red'}>{v === 1 ? '正常' : '禁用'}</Tag>
     },
     { title: '创建时间', dataIndex: 'createTime', key: 'createTime' },
-    { title: '操作', key: 'action', render: (_: any, record: any) => (
+    { title: '操作', key: 'action', render: (_: unknown, record: SysUser) => (
       <Space>
         <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>编辑</Button>
         <Button type="link" icon={<KeyOutlined />} onClick={() => handleResetPassword(record)}>重置密码</Button>
@@ -35,7 +36,7 @@ export default function UserPage() {
 
   const fetchData = async () => {
     setLoading(true)
-    const res: any = await userApi.page({ page, pageSize: 10 })
+    const res = await userApi.page({ page, pageSize: 10 })
     setData(res.records || [])
     setTotal(res.total || 0)
     setLoading(false)
@@ -49,7 +50,7 @@ export default function UserPage() {
     setModalOpen(true)
   }
 
-  const handleEdit = (row: any) => {
+  const handleEdit = (row: SysUser) => {
     setEditingRow(row)
     form.setFieldsValue(row)
     setModalOpen(true)
@@ -63,7 +64,7 @@ export default function UserPage() {
     }})
   }
 
-  const handleResetPassword = (row: any) => {
+  const handleResetPassword = (row: SysUser) => {
     setResetUserId(row.id)
     resetForm.resetFields()
     setResetModalOpen(true)
@@ -72,18 +73,17 @@ export default function UserPage() {
   const handleResetSubmit = async () => {
     const values = await resetForm.validateFields()
     if (resetUserId !== null) {
-      await userApi.resetPassword(resetUserId, values.password)
+      await userApi.resetPassword(resetUserId, values.password as string)
       message.success('密码重置成功')
       setResetModalOpen(false)
+      setResetUserId(null)
     }
   }
 
   const handleSubmit = async () => {
     const values = await form.validateFields()
     if (editingRow) {
-      const payload: any = { ...values, id: editingRow.id }
-      if (!payload.password) delete payload.password
-      await userApi.edit(payload)
+      await userApi.edit({ ...values, id: editingRow.id })
     } else {
       await userApi.add(values)
     }

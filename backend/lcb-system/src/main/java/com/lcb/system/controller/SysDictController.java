@@ -5,8 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lcb.common.core.Result;
 import com.lcb.system.domain.SysDictData;
 import com.lcb.system.domain.SysDictType;
-import com.lcb.system.mapper.SysDictDataMapper;
-import com.lcb.system.mapper.SysDictTypeMapper;
+import com.lcb.system.service.ISysDictTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +16,10 @@ import java.util.List;
 @RequestMapping("/api/system/dict")
 public class SysDictController {
 
-    private final SysDictTypeMapper dictTypeMapper;
-    private final SysDictDataMapper dictDataMapper;
+    private final ISysDictTypeService dictTypeService;
 
-    public SysDictController(SysDictTypeMapper dictTypeMapper, SysDictDataMapper dictDataMapper) {
-        this.dictTypeMapper = dictTypeMapper;
-        this.dictDataMapper = dictDataMapper;
+    public SysDictController(ISysDictTypeService dictTypeService) {
+        this.dictTypeService = dictTypeService;
     }
 
     @Operation(summary = "字典类型分页")
@@ -30,20 +27,20 @@ public class SysDictController {
     @GetMapping("/type/page")
     public Result<Page<SysDictType>> typePage(@RequestParam(defaultValue = "1") int page,
                                               @RequestParam(defaultValue = "10") int pageSize) {
-        return Result.ok(dictTypeMapper.selectPage(new Page<>(page, pageSize), null));
+        return Result.ok(dictTypeService.page(new Page<>(page, pageSize)));
     }
 
     @Operation(summary = "获取字典数据")
     @GetMapping("/data/{type}")
     public Result<List<SysDictData>> getData(@PathVariable String type) {
-        return Result.ok(dictDataMapper.selectByType(type));
+        return Result.ok(dictTypeService.selectDataByType(type));
     }
 
     @Operation(summary = "新增字典类型")
     @SaCheckPermission("system:dict:add")
     @PostMapping("/type")
     public Result<Void> addType(@RequestBody SysDictType dictType) {
-        dictTypeMapper.insert(dictType);
+        dictTypeService.save(dictType);
         return Result.ok();
     }
 }

@@ -9,7 +9,6 @@ import com.lcb.system.service.ISysRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
-import java.util.Arrays;
 
 @Tag(name = "角色管理")
 @RestController
@@ -58,8 +57,7 @@ public class SysRoleController {
     @SaCheckPermission("system:role:edit")
     @PutMapping("/menu")
     public Result<Void> assignMenu(@RequestBody RoleMenuDTO dto) {
-        roleService.getBaseMapper().deleteById(dto.getRoleId());
-        // 实际项目中应操作 t_sys_role_menu 表
+        roleService.assignMenu(dto.getRoleId(), dto.getMenuIds());
         return Result.ok();
     }
 }

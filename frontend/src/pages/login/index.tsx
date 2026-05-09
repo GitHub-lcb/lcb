@@ -1,19 +1,25 @@
 import { Form, Input, Button, Card, message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { authApi } from '../../api/auth'
+import type { LoginParams } from '../../types/api'
 
 export default function Login() {
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
 
-  const onFinish = async (values: any) => {
+  const onFinish = async (values: LoginParams) => {
+    setLoading(true)
     try {
-      const res: any = await authApi.login(values)
+      const res = await authApi.login(values)
       localStorage.setItem('token', res.token)
       message.success('登录成功')
       navigate('/')
     } catch {
       // error handled by interceptor
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -31,7 +37,7 @@ export default function Login() {
             <Input.Password prefix={<LockOutlined />} placeholder="密码" />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>登 录</Button>
+            <Button type="primary" htmlType="submit" block loading={loading}>登 录</Button>
           </Form.Item>
         </Form>
       </Card>

@@ -2,14 +2,15 @@ import { Table, Button, Space, Modal, Form, Input, message, Card, Tag } from 'an
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useState, useEffect } from 'react'
 import { roleApi } from '../../../api/system/role'
+import type { SysRole } from '../../../types/api'
 
 export default function RolePage() {
-  const [data, setData] = useState([])
+  const [data, setData] = useState<SysRole[]>([])
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const [modalOpen, setModalOpen] = useState(false)
-  const [editingRow, setEditingRow] = useState<any>(null)
+  const [editingRow, setEditingRow] = useState<SysRole | null>(null)
   const [form] = Form.useForm()
 
   const columns = [
@@ -19,7 +20,7 @@ export default function RolePage() {
       <Tag color={v === 1 ? 'green' : 'red'}>{v === 1 ? '正常' : '禁用'}</Tag>
     },
     { title: '创建时间', dataIndex: 'createTime', key: 'createTime' },
-    { title: '操作', key: 'action', render: (_: any, record: any) => (
+    { title: '操作', key: 'action', render: (_: unknown, record: SysRole) => (
       <Space>
         <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>编辑</Button>
         <Button type="link" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)}>删除</Button>
@@ -29,7 +30,7 @@ export default function RolePage() {
 
   const fetchData = async () => {
     setLoading(true)
-    const res: any = await roleApi.page({ page, pageSize: 10 })
+    const res = await roleApi.page({ page, pageSize: 10 })
     setData(res.records || [])
     setTotal(res.total || 0)
     setLoading(false)
@@ -43,7 +44,7 @@ export default function RolePage() {
     setModalOpen(true)
   }
 
-  const handleEdit = (row: any) => {
+  const handleEdit = (row: SysRole) => {
     setEditingRow(row)
     form.setFieldsValue(row)
     setModalOpen(true)

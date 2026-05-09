@@ -1,9 +1,19 @@
 import { Table, Card, Tag } from 'antd'
 import { useState, useEffect } from 'react'
-import request from '../../api/request'
+import { auditLogApi } from '../../api/monitor/audit-log'
+
+interface AuditLogItem {
+  id: number
+  username: string
+  operation: string
+  method: string
+  duration: number
+  status: number
+  createTime: string
+}
 
 export default function AuditLog() {
-  const [data, setData] = useState([])
+  const [data, setData] = useState<AuditLogItem[]>([])
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
@@ -21,7 +31,7 @@ export default function AuditLog() {
 
   useEffect(() => {
     setLoading(true)
-    request.get('/monitor/audit-log/page', { params: { page, pageSize: 10 } }).then((res: any) => {
+    auditLogApi.page({ page, pageSize: 10 }).then((res) => {
       setData(res.records || [])
       setTotal(res.total || 0)
     }).finally(() => setLoading(false))

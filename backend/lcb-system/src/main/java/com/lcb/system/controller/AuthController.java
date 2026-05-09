@@ -1,11 +1,12 @@
 package com.lcb.system.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.lcb.common.core.Result;
 import com.lcb.common.exception.ServiceException;
 import com.lcb.system.domain.LoginDTO;
 import com.lcb.system.domain.SysUser;
-import com.lcb.system.mapper.SysUserMapper;
+import com.lcb.system.service.ISysUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,19 +20,19 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final SysUserMapper userMapper;
+    private final ISysUserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthController(SysUserMapper userMapper, PasswordEncoder passwordEncoder) {
-        this.userMapper = userMapper;
+    public AuthController(ISysUserService userService, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Operation(summary = "登录")
     @PostMapping("/login")
     public Result<Map<String, Object>> login(@RequestBody LoginDTO dto) {
-        SysUser user = userMapper.selectOne(
-            new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<SysUser>()
+        SysUser user = userService.getOne(
+            new LambdaQueryWrapper<SysUser>()
                 .eq(SysUser::getUsername, dto.getUsername())
         );
         if (user == null) {
@@ -58,7 +59,7 @@ public class AuthController {
     @GetMapping("/info")
     public Result<Map<String, Object>> info() {
         long userId = StpUtil.getLoginIdAsLong();
-        SysUser user = userMapper.selectById(userId);
+        SysUser user = userService.getById(userId);
         List<String> permissions = StpUtil.getPermissionList();
         Map<String, Object> result = new HashMap<>();
         result.put("user", user);

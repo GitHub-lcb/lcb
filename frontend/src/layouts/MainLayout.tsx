@@ -1,3 +1,4 @@
+import type { MenuProps } from 'antd'
 import { Layout, Menu, Avatar, Dropdown, message } from 'antd'
 import {
   UserOutlined, BellOutlined, AppstoreOutlined,
@@ -10,7 +11,7 @@ import { authApi } from '../api/auth'
 
 const { Header, Sider, Content } = Layout
 
-const menuItems = [
+const menuItems: MenuProps['items'] = [
   { key: '/dashboard', icon: <AppstoreOutlined />, label: 'Dashboard' },
   { key: 'system', icon: <TeamOutlined />, label: '系统管理', children: [
     { key: '/system/user', icon: <UserOutlined />, label: '用户管理' },
@@ -38,14 +39,14 @@ export default function MainLayout() {
     })
   }
 
-  const items: any[] = [
+  const dropdownItems: MenuProps['items'] = [
     { key: 'profile', label: '个人信息' },
     { type: 'divider' },
     { key: 'logout', label: '退出登录', danger: true, onClick: handleLogout },
   ]
 
-  const selectedKey = '/' + location.pathname.split('/').slice(1, 3).join('/')
-  const selectedKeys = [selectedKey]
+  const pathParts = location.pathname.split('/').filter(Boolean)
+  const selectedKeys = pathParts.length > 0 ? ['/' + pathParts.slice(0, 2).join('/')] : ['/dashboard']
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -62,7 +63,7 @@ export default function MainLayout() {
           <span style={{ fontWeight: 600, fontSize: 16 }}>LCB 管理系统</span>
           <div style={{ flex: 1 }} />
           <BellOutlined style={{ fontSize: 18, marginRight: 16, cursor: 'pointer' }} />
-          <Dropdown menu={{ items }} placement="bottomRight">
+          <Dropdown menu={{ items: dropdownItems }} placement="bottomRight">
             <Avatar icon={<UserOutlined />} style={{ cursor: 'pointer', background: '#1677ff' }} />
           </Dropdown>
         </Header>

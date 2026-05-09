@@ -1,8 +1,9 @@
 import request from '../request'
+import type { SysMenu } from '../../types/api'
 
 export const menuApi = {
-  tree: () => request.get('/system/menu/tree'),
-  add: (data: any) => request.post('/system/menu', data),
-  edit: (data: any) => request.put('/system/menu', data),
-  remove: (id: number) => request.delete(`/system/menu/${id}`),
+  tree: (): Promise<SysMenu[]> => request.get('/system/menu/tree'),
+  add: (data: Partial<SysMenu>): Promise<void> => request.post('/system/menu', data),
+  edit: (data: Partial<SysMenu>): Promise<void> => request.put('/system/menu', data),
+  remove: (id: number): Promise<void> => request.delete(`/system/menu/${id}`),
 }
