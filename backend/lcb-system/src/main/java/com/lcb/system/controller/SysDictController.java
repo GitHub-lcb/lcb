@@ -2,6 +2,7 @@ package com.lcb.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lcb.common.core.PageUtils;
 import com.lcb.common.core.Result;
 import com.lcb.system.domain.SysDictData;
 import com.lcb.system.domain.SysDictType;
@@ -12,7 +13,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "字典管理")
 @RestController
@@ -31,11 +31,7 @@ public class SysDictController {
     public Result<Page<SysDictTypeVO>> typePage(@RequestParam(defaultValue = "1") int page,
                                                 @RequestParam(defaultValue = "10") int pageSize) {
         Page<SysDictType> entityPage = dictTypeService.page(new Page<>(page, pageSize));
-        Page<SysDictTypeVO> voPage = new Page<>(entityPage.getCurrent(), entityPage.getSize(), entityPage.getTotal());
-        voPage.setRecords(entityPage.getRecords().stream()
-            .map(SysDictTypeVO::fromEntity)
-            .collect(Collectors.toList()));
-        return Result.ok(voPage);
+        return Result.ok(PageUtils.convert(entityPage, SysDictTypeVO::fromEntity));
     }
 
     @Operation(summary = "获取字典数据")

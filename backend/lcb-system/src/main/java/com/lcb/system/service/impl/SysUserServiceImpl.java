@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
 
     private final PasswordEncoder passwordEncoder;
@@ -19,16 +19,22 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
+    @Transactional
     public boolean save(SysUser entity) {
-        if (entity.getPassword() != null && !entity.getPassword().isEmpty()) {
-            entity.setPassword(passwordEncoder.encode(entity.getPassword()));
+        if (entity.getPassword() == null || entity.getPassword().length() < 6) {
+            throw new IllegalArgumentException("密码长度不能少于6位");
         }
+        entity.setPassword(passwordEncoder.encode(entity.getPassword()));
         return super.save(entity);
     }
 
     @Override
+    @Transactional
     public boolean updateById(SysUser entity) {
-        if (entity.getPassword() != null && !entity.getPassword().isEmpty()) {
+        if (entity.getPassword() != null) {
+            if (entity.getPassword().length() < 6) {
+                throw new IllegalArgumentException("密码长度不能少于6位");
+            }
             entity.setPassword(passwordEncoder.encode(entity.getPassword()));
         }
         return super.updateById(entity);

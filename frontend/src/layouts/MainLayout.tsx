@@ -6,8 +6,9 @@ import {
   FileOutlined, SafetyOutlined, CodeOutlined
 } from '@ant-design/icons'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { authApi } from '@/api/auth'
+import { useStore } from '@/store'
 
 const { Header, Sider, Content } = Layout
 
@@ -28,13 +29,30 @@ export default function MainLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const [collapsed, setCollapsed] = useState(false)
+  const fetchUserInfo = useStore((s) => s.fetchUserInfo)
+  const permissions = useStore((s) => s.permissions)
+  const logout = useStore((s) => s.logout)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      navigate('/login')
+      return
+    }
+    if (permissions.length === 0) {
+      fetchUserInfo().catch(() => {
+        logout()
+        navigate('/login')
+      })
+    }
+  }, [])
 
   const handleLogout = () => {
     authApi.logout().then(() => {
-      localStorage.removeItem('token')
+      logout()
       navigate('/login')
     }).catch(() => {
-      localStorage.removeItem('token')
+      logout()
       navigate('/login')
     })
   }

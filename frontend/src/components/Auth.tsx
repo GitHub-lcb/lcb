@@ -1,8 +1,9 @@
+import type { ReactNode } from 'react'
 import { useStore } from '@/store'
 
 interface AuthProps {
   permission: string
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export default function Auth({ permission, children }: AuthProps) {

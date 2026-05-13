@@ -3,17 +3,20 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { authApi } from '@/api/auth'
+import { useStore } from '@/store'
 import type { LoginParams } from '@/types/api'
 
 export default function Login() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const fetchUserInfo = useStore((s) => s.fetchUserInfo)
 
   const onFinish = async (values: LoginParams) => {
     setLoading(true)
     try {
       const res = await authApi.login(values)
       localStorage.setItem('token', res.token)
+      await fetchUserInfo()
       message.success('登录成功')
       navigate('/')
     } catch {

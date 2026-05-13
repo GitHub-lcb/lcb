@@ -2,6 +2,7 @@ package com.lcb.monitor.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lcb.common.core.PageUtils;
 import com.lcb.common.core.Result;
 import com.lcb.monitor.domain.SysAuditLog;
 import com.lcb.monitor.service.IAuditLogService;
@@ -9,7 +10,6 @@ import com.lcb.monitor.vo.SysAuditLogVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
-import java.util.stream.Collectors;
 
 @Tag(name = "审计日志")
 @RestController
@@ -28,10 +28,6 @@ public class AuditLogController {
     public Result<Page<SysAuditLogVO>> page(@RequestParam(defaultValue = "1") int page,
                                             @RequestParam(defaultValue = "10") int pageSize) {
         Page<SysAuditLog> entityPage = auditLogService.page(new Page<>(page, pageSize));
-        Page<SysAuditLogVO> voPage = new Page<>(entityPage.getCurrent(), entityPage.getSize(), entityPage.getTotal());
-        voPage.setRecords(entityPage.getRecords().stream()
-            .map(SysAuditLogVO::fromEntity)
-            .collect(Collectors.toList()));
-        return Result.ok(voPage);
+        return Result.ok(PageUtils.convert(entityPage, SysAuditLogVO::fromEntity));
     }
 }

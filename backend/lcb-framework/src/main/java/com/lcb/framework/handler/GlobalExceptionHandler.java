@@ -28,6 +28,12 @@ public class GlobalExceptionHandler {
         return Result.fail(403, "无权限访问");
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public Result<Void> handleIllegalArgument(IllegalArgumentException e) {
+        log.warn("参数校验失败: {}", e.getMessage());
+        return Result.fail(e.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public Result<Void> handleException(Exception e) {
         log.error("系统异常", e);

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +24,7 @@ public class GeneratorService {
 
     private final GenTableMapper genTableMapper;
     private final GenTableColumnMapper genTableColumnMapper;
+    private VelocityEngine velocityEngine;
 
     @Value("${generator.backend-path:./backend}")
     private String backendPath;
@@ -33,6 +35,22 @@ public class GeneratorService {
     public GeneratorService(GenTableMapper genTableMapper, GenTableColumnMapper genTableColumnMapper) {
         this.genTableMapper = genTableMapper;
         this.genTableColumnMapper = genTableColumnMapper;
+    }
+
+    @jakarta.annotation.PostConstruct
+    public void init() {
+        velocityEngine = new VelocityEngine();
+        velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADERS, "classpath");
+        velocityEngine.setProperty("resource.loader.classpath.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        velocityEngine.init();
+    }
+
+    public Page<GenTable> selectTablePage(Page<GenTable> page) {
+        return genTableMapper.selectPage(page, null);
+    }
+
+    public GenTable getTableById(Long tableId) {
+        return genTableMapper.selectById(tableId);
     }
 
     public List<Map<String, Object>> getDbTables() {
@@ -89,11 +107,6 @@ public class GeneratorService {
         ctx.put("packageName", table.getPackageName());
         ctx.put("tableComment", table.getTableComment());
 
-        VelocityEngine ve = new VelocityEngine();
-        ve.setProperty(RuntimeConstants.RESOURCE_LOADERS, "classpath");
-        ve.setProperty("resource.loader.classpath.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-        ve.init();
-
         Map<String, String> templates = new LinkedHashMap<>();
         templates.put("controller.java.vm", backendPath + "/lcb-" + moduleName + "/src/main/java/" + packagePath + "/controller/" + className + "Controller.java");
         templates.put("entity.java.vm", backendPath + "/lcb-" + moduleName + "/src/main/java/" + packagePath + "/domain/" + className + ".java");
@@ -105,7 +118,7 @@ public class GeneratorService {
 
         for (Map.Entry<String, String> entry : templates.entrySet()) {
             try {
-                org.apache.velocity.Template tpl = ve.getTemplate("templates/" + entry.getKey(), "UTF-8");
+                org.apache.velocity.Template tpl = velocityEngine.getTemplate("templates/" + entry.getKey(), "UTF-8");
                 VelocityContext context = new VelocityContext(new HashMap<>(ctx));
                 StringWriter sw = new StringWriter();
                 tpl.merge(context, sw);

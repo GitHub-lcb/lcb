@@ -2,7 +2,7 @@ package com.lcb.monitor.aspect;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.lcb.monitor.domain.SysAuditLog;
-import com.lcb.monitor.mapper.SysAuditLogMapper;
+import com.lcb.monitor.service.IAuditLogService;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -13,27 +13,41 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuditLogAspect {
 
-    private final SysAuditLogMapper auditLogMapper;
+    private final IAuditLogService auditLogService;
 
-    public AuditLogAspect(SysAuditLogMapper auditLogMapper) {
-        this.auditLogMapper = auditLogMapper;
+    public AuditLogAspect(IAuditLogService auditLogService) {
+        this.auditLogService = auditLogService;
     }
 
-    @Around("execution(* com.lcb.*.controller.*.*(..))")
+    @Around("execution(* com.lcb.*.controller.*.*(..)) && " +
+            "(@annotation(org.springframework.web.bind.annotation.PostMapping) || " +
+            " @annotation(org.springframework.web.bind.annotation.PutMapping) || " +
+            " @annotation(org.springframework.web.bind.annotation.DeleteMapping))")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         long start = System.currentTimeMillis();
-        Object result = pjp.proceed();
-        long duration = System.currentTimeMillis() - start;
-
         MethodSignature signature = (MethodSignature) pjp.getSignature();
+
         SysAuditLog log = new SysAuditLog();
-        log.setUsername(StpUtil.isLogin() ? StpUtil.getLoginIdAsString() : "anonymous");
+        try {
+            long userId = StpUtil.getLoginIdAsLong();
+            log.setUsername(auditLogService.resolveUsername(userId));
+        } catch (Exception e) {
+            log.setUsername("anonymous");
+        }
         log.setOperation(signature.getMethod().getName());
         log.setMethod(signature.getDeclaringTypeName() + "." + signature.getMethod().getName());
-        log.setDuration(duration);
-        log.setStatus(1);
-        auditLogMapper.insert(log);
 
-        return result;
+        try {
+            Object result = pjp.proceed();
+            log.setDuration(System.currentTimeMillis() - start);
+            log.setStatus(1);
+            return result;
+        } catch (Throwable e) {
+            log.setDuration(System.currentTimeMillis() - start);
+            log.setStatus(0);
+            throw e;
+        } finally {
+            auditLogService.save(log);
+        }
     }
 }

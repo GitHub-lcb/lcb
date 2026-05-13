@@ -2,6 +2,7 @@ package com.lcb.file.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lcb.common.core.PageUtils;
 import com.lcb.common.core.Result;
 import com.lcb.file.domain.SysFile;
 import com.lcb.file.service.IFileService;
@@ -10,7 +11,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.util.stream.Collectors;
 
 @Tag(name = "文件管理")
 @RestController
@@ -36,11 +36,7 @@ public class FileController {
     public Result<Page<SysFileVO>> page(@RequestParam(defaultValue = "1") int page,
                                         @RequestParam(defaultValue = "10") int pageSize) {
         Page<SysFile> entityPage = fileService.page(new Page<>(page, pageSize));
-        Page<SysFileVO> voPage = new Page<>(entityPage.getCurrent(), entityPage.getSize(), entityPage.getTotal());
-        voPage.setRecords(entityPage.getRecords().stream()
-            .map(SysFileVO::fromEntity)
-            .collect(Collectors.toList()));
-        return Result.ok(voPage);
+        return Result.ok(PageUtils.convert(entityPage, SysFileVO::fromEntity));
     }
 
     @Operation(summary = "删除文件")

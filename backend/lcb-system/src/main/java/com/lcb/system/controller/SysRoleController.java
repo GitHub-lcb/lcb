@@ -2,6 +2,7 @@ package com.lcb.system.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lcb.common.core.PageUtils;
 import com.lcb.common.core.Result;
 import com.lcb.system.domain.SysRole;
 import com.lcb.system.dto.RoleMenuDTO;
@@ -11,7 +12,6 @@ import com.lcb.system.vo.SysRoleVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
-import java.util.stream.Collectors;
 
 @Tag(name = "角色管理")
 @RestController
@@ -30,11 +30,7 @@ public class SysRoleController {
     public Result<Page<SysRoleVO>> page(@RequestParam(defaultValue = "1") int page,
                                         @RequestParam(defaultValue = "10") int pageSize) {
         Page<SysRole> entityPage = roleService.page(new Page<>(page, pageSize));
-        Page<SysRoleVO> voPage = new Page<>(entityPage.getCurrent(), entityPage.getSize(), entityPage.getTotal());
-        voPage.setRecords(entityPage.getRecords().stream()
-            .map(SysRoleVO::fromEntity)
-            .collect(Collectors.toList()));
-        return Result.ok(voPage);
+        return Result.ok(PageUtils.convert(entityPage, SysRoleVO::fromEntity));
     }
 
     @Operation(summary = "新增角色")

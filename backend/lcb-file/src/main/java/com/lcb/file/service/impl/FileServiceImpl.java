@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lcb.file.domain.SysFile;
 import com.lcb.file.mapper.SysFileMapper;
 import com.lcb.file.service.IFileService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,7 +18,8 @@ import java.util.UUID;
 @Service
 public class FileServiceImpl extends ServiceImpl<SysFileMapper, SysFile> implements IFileService {
 
-    private final String uploadDir = "upload";
+    @Value("${file.upload-dir:upload}")
+    private String uploadDir;
 
     @Override
     public SysFile upload(MultipartFile file) {

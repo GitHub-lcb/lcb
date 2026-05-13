@@ -153,3 +153,13 @@ CREATE TABLE t_gen_table_column (
     update_time   DATETIME      DEFAULT NOW() COMMENT '更新时间',
     del_flag      TINYINT       DEFAULT 0 COMMENT '0-未删 1-已删'
 ) COMMENT '代码生成-列配置';
+
+-- ============ 索引 ============
+
+CREATE INDEX idx_audit_log_create_time ON t_sys_audit_log (create_time);
+CREATE INDEX idx_audit_log_username ON t_sys_audit_log (username);
+CREATE INDEX idx_user_role_role_id ON t_sys_user_role (role_id);
+CREATE INDEX idx_role_menu_menu_id ON t_sys_role_menu (menu_id);
+CREATE INDEX idx_dict_data_type ON t_sys_dict_data (dict_type);
+CREATE INDEX idx_sys_file_create_time ON t_sys_file (create_time);
+CREATE INDEX idx_gen_table_column_table_id ON t_gen_table_column (table_id);
